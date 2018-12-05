@@ -13,7 +13,7 @@ public class DataBuilder {
             Workbook book = Workbook.getWorkbook(input);
             int sheetSize = book.getNumberOfSheets();
             for(int i = 0; i < sheetSize; i++) {
-                System.out.println(i + 1);
+                //System.out.println(i + 1);
                 //每个sheet 获取几号线
                 Sheet sheet = book.getSheet(i);
                 String line = sheet.getName();
@@ -38,7 +38,7 @@ public class DataBuilder {
                         addEdge(newStation, sucStation, line, startTime, endTime);
                         newStation = sucStation;
                         startTime = endTime;
-                        System.out.println(newStation.getName()+ " " + startTime);
+                        //System.out.println(newStation.getName()+ " " + startTime);
                     }
                 }
 

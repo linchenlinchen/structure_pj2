@@ -8,11 +8,29 @@ public class Vertex {
     private String name ;
     private double longitude;
     private double latitude;
+    private Vertex pai = null;
+    private int d = Integer.MAX_VALUE;
 
     public Vertex(String name,double longitude, double latitude){
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
+    }
+
+    public Vertex getPai() {
+        return pai;
+    }
+
+    public void setPai(Vertex pai) {
+        this.pai = pai;
+    }
+
+    public int getD() {
+        return d;
+    }
+
+    public void setD(int d) {
+        this.d = d;
     }
 
     public ArrayList<Edge> getEdges() {

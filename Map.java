@@ -12,25 +12,78 @@ public class Map {
         this.destination = destination;
     }
 
-    public Vertex nearest_station(){
-        double man_long = person.getLongitude();
-        double man_la = person.getLatitude();
+    //根据字符串判断寻找离人最近站点或者离终点最近站点
+    public Vertex nearest_station(String person_or_dest){
+        double man_long = destination.getLongitude();
+        double man_la = destination.getLatitude();
+        if(person_or_dest.equals("person")) {
+            man_long = person.getLongitude();
+            man_la = person.getLatitude();
+        }
         Vertex nearest = vertices.get(0);
         double distance = Math.sqrt(Math.pow(man_long-nearest.getLongitude(),2) + Math.pow(man_la-nearest.getLatitude(),2));
         for (Vertex vertex:vertices) {//每个站点逐一遍历，复杂度是V
             double station_long = vertex.getLongitude();
             double station_la = vertex.getLatitude();
-            if(getDistance(vertex) < distance){
-                distance = getDistance(vertex);
+            if(getDistance(vertex,person_or_dest) < distance){
+                distance = getDistance(vertex,person_or_dest);
                 nearest = vertex;
             }
         }
         return nearest;
     }
 
-    public double getDistance(Vertex vertex){
-        double man_long = person.getLongitude();
-        double man_la = person.getLatitude();
+    //Dijkstra算法返回从起点站到终点站的一条最短地铁线路
+    public ArrayList<Vertex> dijkstra(Vertex begin,Vertex end){
+        begin.setD(0);
+        ArrayList<Vertex> road = new ArrayList<Vertex>();
+        while (vertices.size() != 0){
+            Vertex u = extract_min();
+            road.add(u);
+            for (Vertex v:u.getAdj()) {
+                if(v.getD() > u.getD() + findEdge(u,v).getCost()){
+                    v.setD(u.getD() + findEdge(u,v).getCost());
+                    v.setPai(u);
+                }
+            }
+        }
+        for (Vertex v:road
+             ) {
+            System.out.println(v.getName() + " "+v.getD());
+        }
+        return road;
+    }
+
+    public Vertex extract_min(){
+        Vertex minVertex = vertices.get(0);
+        int min = vertices.get(0).getD();
+        for (Vertex vertex:vertices) {
+            if(vertex.getD()< min){
+                minVertex = vertex;
+                min = vertex.getD();
+            }
+        }
+        vertices.remove(minVertex);
+        return minVertex;
+    }
+
+    public Edge findEdge(Vertex begin,Vertex end){
+        for (Edge edge1:begin.getEdges()) {
+            for (Edge edge2:end.getEdges()) {
+                if(edge1 == edge2)
+                    return edge1;
+            }
+        }
+        return null;
+    }
+
+    public double getDistance(Vertex vertex,String person_dest){
+        double man_long = destination.getLongitude();
+        double man_la = destination.getLatitude();
+        if(person_dest.equals("person")) {
+            man_long = person.getLongitude();
+            man_la = person.getLatitude();
+        }
         double distance = Math.sqrt(Math.pow(man_long-vertex.getLongitude(),2) + Math.pow(man_la-vertex.getLatitude(),2));
         return distance;
     }
