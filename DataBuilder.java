@@ -76,6 +76,13 @@ public class DataBuilder {
         end.getAdj().add(start);
         end.getEdges().add(edge);
     }
+    public static void addEdge(Vertex start, Vertex end, String line, int time){
+        Edge edge = new Edge(line, time);
+        start.getAdj().add(end);
+        start.getEdges().add(edge);
+        end.getAdj().add(start);
+        end.getEdges().add(edge);
+    }
     //计算时间差
     public static int getCost(String start, String end) {
         int length1 = start.length();
@@ -86,6 +93,7 @@ public class DataBuilder {
         hour = hour >= 0? hour : hour + 4;
         return hour * 60 + ten * 10 + minute;
     }
+
 }
 
 

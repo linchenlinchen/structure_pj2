@@ -17,6 +17,17 @@ public class Vertex {
         this.latitude = latitude;
     }
 
+    //获取线路名称，对于重叠的路线，将字符串连接返回
+    public String getLine(Vertex side){
+        String lineNames = "";
+        for (Edge edge:this.getEdges()) {
+            for (Edge edge1:side.getEdges()) {
+                if(edge == edge1) lineNames = lineNames + " " + edge.getLine();
+            }
+        }
+        return lineNames;
+    }
+
     public Vertex getPai() {
         return pai;
     }

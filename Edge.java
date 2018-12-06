@@ -1,13 +1,16 @@
 package com.company;
 
 public class Edge {
-    private String line;
+    private String line = "";
     private int cost;
     public Edge(String line,int cost) {
-        this.line = line;
+        this.line += line;
         this.cost = cost;
     }
 
+    public void addLine(String line){
+        this.line += line;
+    }
     public String getLine() {
         return line;
     }

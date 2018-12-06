@@ -23,8 +23,6 @@ public class Map {
         Vertex nearest = vertices.get(0);
         double distance = Math.sqrt(Math.pow(man_long-nearest.getLongitude(),2) + Math.pow(man_la-nearest.getLatitude(),2));
         for (Vertex vertex:vertices) {//每个站点逐一遍历，复杂度是V
-            double station_long = vertex.getLongitude();
-            double station_la = vertex.getLatitude();
             if(getDistance(vertex,person_or_dest) < distance){
                 distance = getDistance(vertex,person_or_dest);
                 nearest = vertex;
@@ -34,11 +32,12 @@ public class Map {
     }
 
     //Dijkstra算法返回从起点站到终点站的一条最短地铁线路
-    public ArrayList<Vertex> dijkstra(Vertex begin,Vertex end){
+    public ArrayList<Vertex> dijkstra(Vertex begin){
+        long start = System.nanoTime();
         begin.setD(0);
         ArrayList<Vertex> road = new ArrayList<Vertex>();
         while (vertices.size() != 0){
-            Vertex u = extract_min();
+            Vertex u = extract_min();//可以用最小堆优化
             road.add(u);
             for (Vertex v:u.getAdj()) {
                 if(v.getD() > u.getD() + findEdge(u,v).getCost()){
@@ -47,13 +46,15 @@ public class Map {
                 }
             }
         }
-        for (Vertex v:road
-             ) {
+        long end = System.nanoTime();
+        System.out.println("dijkstra use time : "+(end-start)/1000000 + "ms");
+        for (Vertex v:road) {
             System.out.println(v.getName() + " "+v.getD());
         }
         return road;
     }
 
+    //由于站点不多，没必要用最小堆。最小堆还需要初始化维护之类的
     public Vertex extract_min(){
         Vertex minVertex = vertices.get(0);
         int min = vertices.get(0).getD();
