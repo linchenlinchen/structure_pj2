@@ -2,7 +2,7 @@ package com.company;
 
 import java.util.ArrayList;
 
-public class Vertex {
+public class Vertex implements Comparable{
     private ArrayList<Vertex> adj = new ArrayList<Vertex>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
     private String name ;
@@ -90,5 +90,17 @@ public class Vertex {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Vertex v = (Vertex)o;
+        if(this.getD() > v.getD()){
+            return 1;
+        }
+        else if(this.getD() == v.getD()) {
+            return 0;
+        }
+        return -1;
     }
 }

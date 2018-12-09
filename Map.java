@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Map {
     private Person person;
@@ -13,7 +14,7 @@ public class Map {
     }
 
     //根据字符串判断寻找离人最近站点或者离终点最近站点
-    public Vertex nearest_station(String person_or_dest){
+    public Vertex nearest_station(String person_or_dest,Vertex except1,Vertex except2){
         double man_long = destination.getLongitude();
         double man_la = destination.getLatitude();
         if(person_or_dest.equals("person")) {
@@ -23,7 +24,7 @@ public class Map {
         Vertex nearest = vertices.get(0);
         double distance = Math.sqrt(Math.pow(man_long-nearest.getLongitude(),2) + Math.pow(man_la-nearest.getLatitude(),2));
         for (Vertex vertex:vertices) {//每个站点逐一遍历，复杂度是V
-            if(getDistance(vertex,person_or_dest) < distance){
+            if(vertex != except1 && vertex != except2 && getDistance(vertex,person_or_dest) < distance){
                 distance = getDistance(vertex,person_or_dest);
                 nearest = vertex;
             }
@@ -31,8 +32,20 @@ public class Map {
         return nearest;
     }
 
+    public Vertex[] topThree_nearest(String person_or_dest){
+        Vertex[] topThree = new Vertex[3];
+        topThree[0] = this.nearest_station(person_or_dest,null,null);
+        topThree[1] = this.nearest_station(person_or_dest,topThree[0],null);
+        topThree[2] = this.nearest_station(person_or_dest,topThree[1],topThree[0]);
+        return topThree;
+    }
+
     //Dijkstra算法返回从起点站到终点站的一条最短地铁线路
     public ArrayList<Vertex> dijkstra(Vertex begin){
+        for (Vertex vertex:vertices) {
+            vertex.setD(Integer.MAX_VALUE);
+            vertex.setPai(null);
+        }
         long start = System.nanoTime();
         begin.setD(0);
         ArrayList<Vertex> road = new ArrayList<Vertex>();
@@ -40,7 +53,7 @@ public class Map {
             Vertex u = extract_min();//可以用最小堆优化
             road.add(u);
             for (Vertex v:u.getAdj()) {
-                if(v.getD() > u.getD() + findEdge(u,v).getCost()){
+                if(v.getD() > u.getD() + findEdge(u,v).getCost() && u.getD() + findEdge(u,v).getCost() > 0){
                     v.setD(u.getD() + findEdge(u,v).getCost());
                     v.setPai(u);
                 }
@@ -48,14 +61,14 @@ public class Map {
         }
         long end = System.nanoTime();
         System.out.println("dijkstra use time : "+(end-start)/1000000 + "ms");
-        for (Vertex v:road) {
-            System.out.println(v.getName() + " "+v.getD());
-        }
+//        for (Vertex v:road) {
+//            System.out.println(v.getName() + " "+v.getD());
+//        }
         return road;
     }
 
     //由于站点不多，没必要用最小堆。最小堆还需要初始化维护之类的
-    public Vertex extract_min(){
+    private Vertex extract_min(){
         Vertex minVertex = vertices.get(0);
         int min = vertices.get(0).getD();
         for (Vertex vertex:vertices) {
@@ -87,6 +100,12 @@ public class Map {
         }
         double distance = Math.sqrt(Math.pow(man_long-vertex.getLongitude(),2) + Math.pow(man_la-vertex.getLatitude(),2));
         return distance;
+    }
+
+    public void clearPai(){
+        for (Vertex v:vertices) {
+
+        }
     }
 
     public Destination getDestination() {
